@@ -47,7 +47,7 @@ function digitifyString(funnyString : string ) : string {
             matching = [];
             subs = "";
             subInx_s = subInx_e;
-            subInx_e = subInx_s += 1;
+            subInx_e = subInx_s + 1;
         } else {
             subInx_e += 1;
 
@@ -97,7 +97,8 @@ function findSum(allInputLines: string[]) : number {
     }, 0);
 }
 
-/*console.log(findSum(
+/*
+console.log(findSum(
 [
 "two1nine",
 "eightwothree",
@@ -106,6 +107,5 @@ function findSum(allInputLines: string[]) : number {
 "4nineeightseven2",
 "zoneight234",
 "7pqrstsixteen"
-]));
-*/
+]));*/
 console.log(findSum(fs.readFileSync('C:/Users/onja/Downloads/input_day_1.txt', 'utf-8').split('\n'))); 
