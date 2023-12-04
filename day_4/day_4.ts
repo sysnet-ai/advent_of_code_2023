@@ -18,9 +18,29 @@ function findWinners(line: string) : string[] {
 
     const have = haveNums.filter((n) => winners.has(n));
 
-    console.log(`From ${having} the winners are ${have} in ${winNums}`);
+    //console.log(`From ${having} the winners are ${have} in ${winNums}`);
 
     return have;
+}
+
+// Part Two
+function cascadingWinners(allScratchies: string[]) : number {
+
+    const scratchiesAndTimes: [string, number][] = allScratchies.map((s) => [s, 1]);
+
+    for(let i = 0; i < scratchiesAndTimes.length; i++) {
+
+        const [line, timesToScratch]: [string, number] = scratchiesAndTimes[i]; 
+        let numMatches = findWinners(line).length;
+
+        for (let cascade = 1; cascade <= numMatches; cascade++) {
+            scratchiesAndTimes[i+cascade][1] += timesToScratch;
+        }
+    }
+
+    return scratchiesAndTimes.reduce((prevV, element) => {
+        return prevV + element[1];
+    }, 0) 
 }
 
 
@@ -37,6 +57,12 @@ const scratchies =
 
 const scratchies = fs.readFileSync('input_day_4.txt', 'utf-8').split('\n');
 scratchies.pop();
+
+// Part Two
+console.log(cascadingWinners(scratchies));
+
+// Part One
+/*
 console.log(
     scratchies.map((line) => findWinners(line)
         .reduce((prevV, n) =>{
@@ -51,3 +77,4 @@ console.log(
     .reduce((prevV, currV) => {
         return prevV+currV;
     }, 0));
+*/
