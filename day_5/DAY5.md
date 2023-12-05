@@ -18,9 +18,15 @@ This seems easy on the surface, I'm sure I'm gonna get smoked.
 [... Goes and tries this in code...]
 [... comes back 45 min later ...]
 
+### WRECKED!
 So this worked perfectly for the example... *BUT* the input text completely destroyed the approach, because you run out of memory - as they're using gigantic numbers.
 
 <... CURSES IN MULTIPLE LANGUAGES... >
 
 
 Plan 2 - Basically the same as before, but create ranges. This is actually "easier", but is kinda dumb that I only saw it until now.
+Now we do some math trickery and that should work.
+
+And that worked... Took 10mins to change it (I knew this was gonna happen so I made the code heavily modular with no repetition and that was smort! :D)
+
+## Part Two

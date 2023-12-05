@@ -12,22 +12,18 @@ function mapRange(targetCat: number, sourceCat: number, rangeLen: number) : Reco
     return mappedRange;
 }
 
-function readAlmanacSection(allLines: string[], currLine: number) : [number, Record<number,number>] {
-    let almanacSection: Record<number, number> = {};
+function readAlmanacSection(allLines: string[], currLine: number) : [number, number[][]] {
+    let almanacSection = [];
 
     let l;
     while (!!(l = allLines[currLine++])) {
-        const [targetCat, sourceCat, rangeLen] = l.split(' ');
-        almanacSection = {
-            ...almanacSection,
-            ...mapRange(parseInt(targetCat), parseInt(sourceCat), parseInt(rangeLen))
-        };
+        almanacSection.push(l.split(' ').map(s => parseInt(s)));
     }
 
     return [currLine, almanacSection];
 }
 
-function readAlmanac(allLines: string[]) {
+function readAlmanac(allLines: string[]) : number {
     let currLine = 0;
 
     const seeds = allLines[currLine].split(' ').slice(1).map(s => parseInt(s));
@@ -47,17 +43,23 @@ function readAlmanac(allLines: string[]) {
 
     let seeds_to_loc = seeds.map((seed) => {
         // LOL
-        return sections.reduce((prevInx: number, section: Record<number, number>) => {
+        return sections.reduce((prevInx: number, section: number[][]) => {
             let mapped: number;
-            if ((mapped = section[prevInx])) {
-                console.log(mapped);
-                return mapped;
+            for (const r of section) {
+                if (r[1] <= prevInx && prevInx <= r[1]+r[2]) {
+                    return (prevInx - r[1]) + r[0];
+                }
             }
             return prevInx;
         }, seed);
     });
 
     console.log(seeds_to_loc);
+
+    return seeds_to_loc.reduce((prevMin, cV) => {
+        return Math.min(prevMin, cV);
+    }, Infinity);
+    
 }
 
 /*const allLines =
@@ -97,4 +99,4 @@ function readAlmanac(allLines: string[]) {
 
 const allLines = fs.readFileSync('input_day_5.txt', 'utf-8').split('\n');
 allLines.pop();
-readAlmanac(allLines);
+console.log(readAlmanac(allLines));
