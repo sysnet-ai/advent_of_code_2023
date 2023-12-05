@@ -30,3 +30,13 @@ Now we do some math trickery and that should work.
 And that worked... Took 10mins to change it (I knew this was gonna happen so I made the code heavily modular with no repetition and that was smort! :D)
 
 ## Part Two
+
+OH - MY - GOD... :/
+
+Since you cannot run through the range (because it's in the order of Hundreds of Millions), we just do the same thing and use ranges again.
+
+Plan 1:
+- Seeds are now ranges [Start, Finish]
+- Every time you go through a 'step' (i.e. seed to soil, soil to fert ...) you transform the range into multiple ranges.
+- By the end you will have something like 20 or so ranges, grab the lowest number from them.
+
