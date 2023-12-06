@@ -17,6 +17,7 @@ function readAlmanacSection(allLines: string[], currLine: number) : [number, num
 
     let l;
     while (!!(l = allLines[currLine++])) {
+        console.log(l);
         almanacSection.push(l.split(' ').map(s => parseInt(s)));
     }
 
@@ -69,7 +70,7 @@ function readAlmanac(allLines: string[]) : number {
 
     let seeds = allLines[currLine].split(' ').slice(1).map(s => parseInt(s));
 
-    let seedRanges = [];
+    let seedRanges:number[][] = [];
 
     for (let is = 0; is < seeds.length; is += 2) {
         seedRanges.push([seeds[is], seeds[is] + seeds[is+1] - 1]);
@@ -83,7 +84,13 @@ function readAlmanac(allLines: string[]) : number {
         .map((section) => {
             const header = `${section} map:`
             console.log(header);
-            while (allLines[currLine++] != header);
+            let l;
+            while ((l = allLines[currLine++]) != header) {
+                console.log(currLine, " ", (l == header), l);
+                if (currLine > allLines.length) {
+                    throw Error("XXX");
+                }
+            };
             let curSection;
             [currLine, curSection] = readAlmanacSection(allLines, currLine++);
             return curSection;
@@ -110,17 +117,21 @@ function readAlmanac(allLines: string[]) : number {
     }, Infinity);
     */
 
-    seedRanges.forEach((sr) => {
-        //for (let section of sections) {
-            console.log(rangeIntoRanges(sr, sections[0]).sort((a, b) => a[0] - b[0]));
-        //}
-    })
+    sections.forEach((section) => {
+        let newRanges:number[][] = [];
+        seedRanges.forEach((sr) => {
+            newRanges.push(...rangeIntoRanges(sr, section).sort((a, b) => a[0] - b[0]));
+        })
+        seedRanges = newRanges;
+        console.log(seedRanges.sort( (a, b) => a[0] - b[0] ));
+    });
+
 
     return 0;
 }
 
-const allLines =
-["seeds: 15 114 55 13",
+/*const allLines =
+["seeds: 79 14 55 13",
 "",
 "seed-to-soil map:",
 "50 98 2",
@@ -152,8 +163,8 @@ const allLines =
 "",
 "humidity-to-location map:",
 "60 56 37",
-"56 93 4"];
+"56 93 4"];*/
 
-//const allLines = fs.readFileSync('input_day_5.txt', 'utf-8').split('\n');
-//allLines.pop();
-console.log(readAlmanac(allLines));
+const allLines = fs.readFileSync('input_day_5.txt', 'utf-8').split('\n');
+allLines.pop();
+console.log(readAlmanac(allLines.map(l => l.trim())));

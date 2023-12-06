@@ -37,6 +37,7 @@ Since you cannot run through the range (because it's in the order of Hundreds of
 
 Plan 1:
 - Seeds are now ranges [Start, Finish]
-- Every time you go through a 'step' (i.e. seed to soil, soil to fert ...) you transform the range into multiple ranges.
+- Every time you go through a 'step' (i.e. seed to soil, soil to fert ...) you transform the range into multiple ranges, each range will become either 1 range (the [start, finish] range fits exactly into the target range), 2 ranges (there's some tail on the left or the right), or 3 ranges (there's tails on the left and the right).
 - By the end you will have something like 20 or so ranges, grab the lowest number from them.
 
+Turns out Plan 1 was successful :D! - even if the 'range into ranges' code isn't super clean (sorry, it was 10pm and I was getting desperate haha)
