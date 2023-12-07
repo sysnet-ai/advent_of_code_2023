@@ -53,18 +53,23 @@ function classifyHandsByType(handsAndBids: [string, number][]) : [string, number
     const sortedHands = handTypes.map((handsInType) => {
 
         return handsInType.sort((a, b) => {
-            for (const ac of a[0]) {
+
+
+            for (let i = 0; i < a[0].length; i++) {
+                const ac = a[0][i];
+                const bc = b[0][i];
                 const fac: number =  specialSuits[ac] ?? parseInt(ac); 
-                for(const bc of b[0]) {
-                    const fbc: number =  specialSuits[bc] ?? parseInt(bc); 
-                    return fbc - fac;
-                }
+                const fbc: number =  specialSuits[bc] ?? parseInt(bc); 
+
+                if (fbc == fac) continue;
+                return fbc - fac;
             }
 
             return 0;
         });
     })
     
+    console.log(sortedHands);
     return sortedHands;
 }
 
@@ -82,7 +87,6 @@ const parsedHaB: [string, number][] = handsAndBids.map((hab) => {
     let h = hab.split(' ');
     return [h[0], parseInt(h[1])] ;
 })
-console.log(parsedHaB);
 console.log(classifyHandsByType(parsedHaB).flat().reverse().reduce((prevV, [hand, bid], i) => {
     return prevV + (bid*(i+1));
 }, 0));
