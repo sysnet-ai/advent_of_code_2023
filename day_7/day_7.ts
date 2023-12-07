@@ -12,7 +12,6 @@ const HC = 6
 
 function findHandType(hand: string) {
     const r : Record<string, number> = {};
-
     for (const c of hand) {
         if (!r[c]) {
             r[c] = 0;
@@ -20,9 +19,13 @@ function findHandType(hand: string) {
         r[c] += 1;
     } 
 
-    const ordered = Object.entries(r).sort((a, b) =>  b[1] - a[1] );
-    const highest = ordered[0][1];
+    const jays = r['J'] ?? 0;
+    if (jays == 5) return FIVE_OK;
 
+    delete r['J'];
+    const ordered = Object.entries(r).sort((a, b) =>  b[1] - a[1] );
+
+    const highest = ordered[0][1] + jays;
     let secondH = 3141;
     if (ordered.length > 1) {
         secondH = ordered[1][1];
@@ -49,7 +52,7 @@ function classifyHandsByType(handsAndBids: [string, number][]) : [string, number
         handTypes[findHandType(h)].push([h, bid]);
     }) 
 
-    const specialSuits: Record<string, number> = {"A": 14, "K": 13, "Q": 12, "J": 11, "T": 10 };
+    const specialSuits: Record<string, number> = {"A": 14, "K": 13, "Q": 12, "J": 0, "T": 10 };
     const sortedHands = handTypes.map((handsInType) => {
 
         return handsInType.sort((a, b) => {
@@ -73,12 +76,14 @@ function classifyHandsByType(handsAndBids: [string, number][]) : [string, number
     return sortedHands;
 }
 
-/*const handsAndBids = 
+/*
+const handsAndBids = 
 ["32T3K 765",
 "T55J5 684",
 "KK677 28",
 "KTJJT 220",
-"QQQJA 483",];*/
+"QQQJA 483",];
+*/
 
 const handsAndBids = fs.readFileSync('input_day_7.txt', 'utf-8').split('\n');
 handsAndBids.pop();

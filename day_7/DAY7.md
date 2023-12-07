@@ -31,3 +31,5 @@ Seems relatively straight forward ... but we'll see.
 
 Plan 1 - Just skip the J's when counting, and then add them to the highest.
          Change the sort function so that J = 0
+
+Hey! That worked! - With a minor special case for when you have 5 J's
