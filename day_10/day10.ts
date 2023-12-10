@@ -133,7 +133,16 @@ function flood(map: string[][], startPos: [number, number]) : number {
         const pable = findPipeable(map, [pos[0], pos[1]]);
         pable.forEach((p) => positionsToExpand.push([p[0], p[1], pos[2]+1]));
 
-        map[pos[0]][pos[1]] = "X"; 
+        let v = map[pos[0]][pos[1]]; 
+
+        if (v == "-") {
+            v = "H";
+        } else if (v == "|") {
+            v = "V";
+        } else {
+            v = "B";
+        }
+        map[pos[0]][pos[1]] = v; 
 
         if (pable.length == 0) {
             max = pos[2];
@@ -162,10 +171,10 @@ function countEnclosed(map: string[][]) {
     for(let i = 0; i < map.length; i++) {
         let inToggle = false;
         for (let j = 0; j < map[0].length; j++) {
-            if (map[i][j] == 'X') {
+            if (map[i][j] == 'V' || map[i][j] == 'B') {
                 inToggle = !inToggle;
-            } else if (inToggle) {
-                map[i][j] = 'H';
+            } else if (inToggle && map[i][j] != 'H') {
+                map[i][j] = '?';
             }
         }
     }
@@ -173,10 +182,10 @@ function countEnclosed(map: string[][]) {
     for (let j = 0; j < map[0].length; j++) {
         let inToggle = false;
         for (let i = 0; i < map.length; i++) {
-            if (map[i][j] == 'X') {
+            if (map[i][j] == 'H' || map[i][j] == 'B') {
                 inToggle = !inToggle;
-            } else if (inToggle && map[i][j] == 'H') {
-                map[i][j] = "I";
+            } else if (inToggle && map[i][j] != 'V') {
+                map[i][j] = "!";
             }
         }
     }
@@ -197,6 +206,7 @@ const map =  [
 ".|.|.".split(''),
 ".L-J.".split(''),
 ".....".split('')];
+*/
 /*const map = [
 "7-F7-".split(''),
 ".FJ|7".split(''),

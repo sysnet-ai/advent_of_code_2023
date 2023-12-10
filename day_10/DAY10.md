@@ -28,3 +28,5 @@ Hmmm... feels a bit convoluted, but I think I have a simple plan taking adavanta
 1. Profit??
 
 We'll see...
+
+Ok turns out that is incorrect - You need to keep track of the type of segment you're on, if you're already on the pipe, and you see another pipe that is continuation then you shouldn't toggle.
