@@ -158,6 +158,30 @@ function replaceSnake(map: string[][]) : [number, number] {
     return pos;
 }
 
+function countEnclosed(map: string[][]) {
+    for(let i = 0; i < map.length; i++) {
+        let inToggle = false;
+        for (let j = 0; j < map[0].length; j++) {
+            if (map[i][j] == 'X') {
+                inToggle = !inToggle;
+            } else if (inToggle) {
+                map[i][j] = 'H';
+            }
+        }
+    }
+
+    for (let j = 0; j < map[0].length; j++) {
+        let inToggle = false;
+        for (let i = 0; i < map.length; i++) {
+            if (map[i][j] == 'X') {
+                inToggle = !inToggle;
+            } else if (inToggle && map[i][j] == 'H') {
+                map[i][j] = "I";
+            }
+        }
+    }
+}
+
 /*
 const map = 
 ["..F7.".split(''),
@@ -166,12 +190,13 @@ const map =
 "|F--J".split(''),
 "LJ...".split('')]
 */
-/*const map =  [
+/*
+const map =  [
 ".....".split(''),
-".F-7.".split(''),
+".S-7.".split(''),
 ".|.|.".split(''),
 ".L-J.".split(''),
-".....".split('')];*/
+".....".split('')];
 /*const map = [
 "7-F7-".split(''),
 ".FJ|7".split(''),
@@ -180,12 +205,26 @@ const map =
 "LJ.LJ".split('')]
 */
 
-const mapLines = fs.readFileSync('input_day_10.txt', 'utf-8').split('\n');
-mapLines.pop();
+const map =  [
+".F----7F7F7F7F-7....".split(''),
+".|F--7||||||||FJ....".split(''),
+".||.FJ||||||||L7....".split(''),
+"FJL7L7LJLJ||LJ.L-7..".split(''),
+"L--J.L7...LJS7F-7L7.".split(''),
+"....F-J..F7FJ|L7L7L7".split(''),
+"....L7.F7||L7|.L7L7|".split(''),
+".....|FJLJ|FJ|F7|.LJ".split(''),
+"....FJL-7.||.||||...".split(''),
+"....L---J.LJ.LJLJ...".split('')]
 
-const map = mapLines.map((l) => l.split(''));
+//const mapLines = fs.readFileSync('input_day_10.txt', 'utf-8').split('\n');
+//mapLines.pop();
+//const map = mapLines.map((l) => l.split(''));
+
 
 let p = replaceSnake(map);
 console.log(p);
 console.log(flood(map, p));
+countEnclosed(map);
+console.log(map.map((l) => l.join('')));
 
