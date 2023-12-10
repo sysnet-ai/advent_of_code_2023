@@ -8,3 +8,10 @@ Around 40 lines of code made it work - which I was suspicious because the number
 
 But no - it worked!! :D... Now I'm expecting Part two to be awful (or maybe they're taking it easy cause day 8 was kinda hard?)
 
+## Part Two
+
+This seems very easy - probably some piety after Day 8? I'm just adjusting one for loop to add at the end instead of the beginning?
+
+[... codes that for a few minutes ... ]
+
+Yup... that works. Total mercy granted by the AoC powers. I'll take it.
