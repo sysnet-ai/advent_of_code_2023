@@ -58,13 +58,13 @@ function expandedManhattanDist(pos1: [number, number], pos2: [number, number],
 
     expandedCols.forEach((ec) => {
         if (hStart < ec && ec < hEnd) {
-            hManh += 1;
+            hManh += 999999;
         }
     });
 
     expandedRows.forEach((er) => {
         if (vStart < er && er < vEnd) {
-            vManh += 1;
+            vManh += 999999;
         }
     });
 
