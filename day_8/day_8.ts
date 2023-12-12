@@ -39,6 +39,25 @@ function findWay(allLines: string[]) : number {
     const totalStarts = allStarts.length;
     let arrived = 0;
     console.log(totalStarts);
+    console.log(allStarts);
+
+    allStarts.forEach((sog) => {
+        let s = sog;
+        steps = 0;
+        inst_inx = 0;
+        while (s[2] != "Z") {
+            steps++;
+            let i =  insts[inst_inx] === 'L' ? 0 : 1;
+            s = map[s][i];
+            inst_inx = (inst_inx + 1) % insts.length;
+        }
+
+        console.log(">>> ", sog, s, steps);
+    })
+
+
+
+    /*
     while (arrived != totalStarts) {
         steps++;
         let i =  insts[inst_inx] === 'L' ? 0 : 1;
@@ -52,11 +71,18 @@ function findWay(allLines: string[]) : number {
             return s;    
         });
 
-        if (arrived > 0)
-            console.log(">> ", arrived); 
+        if (arrived > 0) {
+            console.log(">> ", arrived, steps, allStarts); 
+        }
+
+        if (allStarts[4] == "AAA") {
+            console.log(">> ", arrived, steps, allStarts); 
+            break;
+        }
 
         inst_inx = (inst_inx + 1) % insts.length;
     }
+    */
 
     return steps;
 }
