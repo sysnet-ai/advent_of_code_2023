@@ -21,3 +21,18 @@ Step (2)(iii) is necessary, because you could find a situation where it is somet
 If we can't find any symmetry on the rows, we transpose the little map and we try again (that way the code is the same and transposing is trivial so less space for mistakes ;))
 
 Let's see how bad is part two :P 
+
+
+## Part Two
+
+... Ugh... this reads pretty dire.
+
+The approach I'm thinking is basiclly keep the same algorithm, but add a quick twist:
+If we find symmetry, and we didn't do any repairs - reject that.
+While we're doing the symmetry check, if there's a line that would become symmetric by doing only one change - do it.
+
+Only accept those with 1 change done - keep everything else.
+
+*AAAAND* that works... I'm surprised, I was expecting something to break along the way and with the exception of some minor fudging it pretty much worked out of the box.
+
+I guess a good thing of the implementation is that I don't actually change the string, the "repair" only means "I will forgive 1 difference"
