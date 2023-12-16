@@ -140,7 +140,7 @@ function flood(map: string[][], startPos: [number, number]) : number {
         } else if (v == "|") {
             v = "V";
         } else {
-            v = "B";
+            v = (validPipe.lastIndexOf(v)-2).toString();
         }
         map[pos[0]][pos[1]] = v; 
 
@@ -167,7 +167,7 @@ function replaceSnake(map: string[][]) : [number, number] {
     return pos;
 }
 
-function countEnclosed(map: string[][]) {
+/*function countEnclosed(map: string[][]) {
     for(let i = 0; i < map.length; i++) {
         let inToggle = false;
         for (let j = 0; j < map[0].length; j++) {
@@ -189,6 +189,141 @@ function countEnclosed(map: string[][]) {
             }
         }
     }
+}
+*/
+
+function clearNonPath(map: string[][]) { 
+    // Clear everything that isn't part of the main loop
+    for (let i = 0; i < map.length; i++) {
+        for (let j = 0; j < map[i].length; j++) {
+            if (!"0123HV".includes(map[i][j])) {
+                map[i][j] =".";
+            }
+        }
+    }
+}
+
+function paintBucketAlgorithm(map: string[][]) {
+    // Find all the blocks of adjacent empties
+    const adjacents = [];
+    for (let i = 0; i < map.length; i++) {
+        for (let j = 0; j < map[i].length; j++) {
+            if (map[i][j] == "." || map[i][j] == "*") {
+
+                const toVisit = [[i,j]];
+                const adj = [];
+
+                while (toVisit.length > 0) {
+
+                    let v = toVisit.pop()!;
+                    const [k, q] = v;
+                    if (map[k][q] == ".") {
+                        map[k][q]= "?";
+                    } else if (map[k][q] == "*") {
+                        map[k][q]= "!";
+                    }
+                    adj.push([k, q]);
+
+                    const n : [number, number] = [k - 1,q]
+                    const s : [number, number] = [k + 1,q]
+                    const e : [number, number] = [k,q + 1]
+                    const w : [number, number] = [k,q - 1]
+
+                    const dirs = [n,s,w,e];
+                    for (const d of dirs) {
+                        if (d[0] >= 0 && d[0] < map.length &&
+                            d[1] >= 0 && d[1] < map[i].length && ".*".includes(map[d[0]][d[1]])) {
+                            toVisit.push([d[0], d[1]]);
+                        }
+                    }
+                }
+
+                adjacents.push(adj);
+            }
+        }
+    }
+
+    // For each group of adjacent empties
+outer_loop:
+    for (const adj of adjacents) {
+        for (const a of adj) {
+            const [k, q] = a; 
+            const n : [number, number] = [k - 1,q]
+            const s : [number, number] = [k + 1,q]
+            const e : [number, number] = [k,q + 1]
+            const w : [number, number] = [k,q - 1]
+
+            const dirs = [n,s,w,e];
+
+            const v = dirs.filter((d) => {
+                return (d[0] < 0 || d[0] >= map.length || d[1] < 0 || d[1] >= map[0].length);
+            });
+
+            if (v.length > 0) {
+                continue outer_loop;
+            }
+        }
+
+        let exes = 0;
+        for (const a of adj) {
+            if (map[a[0]][a[1]] == "?") {
+                map[a[0]][a[1]] = "X";
+                exes++;
+            }
+        }
+
+        console.log(exes);
+    }
+
+    //console.log(adjacents);
+}
+
+//"FLJ7";
+function hAdjacentFor(s: string) {
+    switch (s) {
+        case "H":
+            return "H";
+        case "0":
+            return "H";
+        case "1":
+            return "H";
+        default:
+            return "*";
+    }
+}
+
+function vAdjacentFor(s: string) {
+    switch (s) {
+        case "V":
+            return "V";
+        case "0":
+            return "V";
+        case "3":
+            return "V";
+        default:
+            return "*";
+    }
+}
+
+function expandMap(map: string[][]) : string[][] {
+    const expandedMap = []
+
+    for (let i = 0; i < map.length; i++) {
+        const row = [];
+        for (let j = 0; j < map[0].length; j++) {
+            row.push(map[i][j]);
+            row.push(hAdjacentFor(map[i][j]));
+        }
+        expandedMap.push(row);
+
+        const newRow = [];
+        for (let j = 0; j < row.length; j++) {
+            newRow.push(vAdjacentFor(row[j]));
+        }
+        expandedMap.push(newRow);
+    }
+
+    return expandedMap;
 }
 
 /*
@@ -215,6 +350,7 @@ const map =  [
 "LJ.LJ".split('')]
 */
 
+/*
 const map =  [
 ".F----7F7F7F7F-7....".split(''),
 ".|F--7||||||||FJ....".split(''),
@@ -223,18 +359,29 @@ const map =  [
 "L--J.L7...LJS7F-7L7.".split(''),
 "....F-J..F7FJ|L7L7L7".split(''),
 "....L7.F7||L7|.L7L7|".split(''),
-".....|FJLJ|FJ|F7|.LJ".split(''),
+".F...|FJLJ|FJ|F7|.LJ".split(''),
 "....FJL-7.||.||||...".split(''),
-"....L---J.LJ.LJLJ...".split('')]
+".L..L---J.LJ.LJLJ.|.".split('')]
+*/
 
-//const mapLines = fs.readFileSync('input_day_10.txt', 'utf-8').split('\n');
-//mapLines.pop();
-//const map = mapLines.map((l) => l.split(''));
+const mapLines = fs.readFileSync('input_day_10.txt', 'utf-8').split('\n');
+mapLines.pop();
+const map = mapLines.map((l) => l.split(''));
 
 
 let p = replaceSnake(map);
-console.log(p);
-console.log(flood(map, p));
-countEnclosed(map);
-console.log(map.map((l) => l.join('')));
+flood(map, p);
+clearNonPath(map);
+const emap = expandMap(map);
+paintBucketAlgorithm(emap);
+emap.forEach(l => console.log(l.join('')));
+//console.log(map.map((l) => l.join('')));
+//
+for (let i = 0; i < emap.length; i+=2) {
+    let s = "";
+    for (let j = 0; j < emap[i].length; j+=2) {
+        s += emap[i][j]
+    }
+    console.log(s);
+}
 

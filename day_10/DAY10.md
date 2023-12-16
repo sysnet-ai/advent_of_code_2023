@@ -30,3 +30,15 @@ Hmmm... feels a bit convoluted, but I think I have a simple plan taking adavanta
 We'll see...
 
 Ok turns out that is incorrect - You need to keep track of the type of segment you're on, if you're already on the pipe, and you see another pipe that is continuation then you shouldn't toggle.
+
+
+Wweeeeeeell... it took multiple days, but we ended up doing a few things:
+1. Expand the map to twice the size, that's needed for the 'squeezing' part (I got a hint from Reddit for this one).
+1. After you do the expansion, differentiate between "originally empty" (`.`) and "empty after the expansion (`*`)
+1. After that, just create a 'simple' paint bucket algorithm, like the one for paint brush.
+    1. Basically find an empty spot, and add all the empties that are adjacent to it and continue doing that in a kind-of Breadth First search algorithm 
+    2. Then for each of this 'blobs', check if at any point they're adjacent to the edges of the map, discard them.
+1. Once you have found viable blobs (i.e. they never touch the edges), only count the spaces inside those blobs that have a "." (i.e. only the original empties, not the ones from the expansion). 
+
+
+The code is super messy and I know there's multiple places where we could've been more elegant / tighter - BUT... It's AoC baby! We move fast and write shitty code :P
