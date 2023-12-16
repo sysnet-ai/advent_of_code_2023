@@ -146,11 +146,27 @@ const map = [
 "..//.|....",
 ]
 */
+
 const map = fs.readFileSync('input_day_16.txt', 'utf-8').split('\n');
 map.pop();
-let s = advanceBeams(map, [new Beam([0,0], Dir.E)]);
 
-console.log("Res: ", s.size);
+let msize = 0;
+
+for (let i = 0; i < map.length; i++) {
+    let s = advanceBeams(map, [new Beam([i,0], Dir.E)]);
+    let s2 = advanceBeams(map, [new Beam([i, map.length-1], Dir.W)]);
+
+    msize = Math.max(s.size, s2.size, msize);
+}
+
+for (let i = 0; i < map[0].length; i++) {
+    let s = advanceBeams(map, [new Beam([0,i], Dir.S)]);
+    let s2 = advanceBeams(map, [new Beam([map.length-1, i], Dir.N)]);
+
+    msize = Math.max(s.size, s2.size, msize);
+}
+
+console.log("Res: ", msize);
 
 /*
 const smap = map.map(l => l.split(''));
