@@ -34,10 +34,19 @@ function aStar(map: string[]) {
     const visited:Record<string, number> = {};
 
     const target = [map.length-1, map[0].length-1];
-    let start = new Node([0,0], 0, 0, Dir.E);
 
+    // Part Two since we have the minimum requirement, start them already moving in both E and S 
+    let h1 = parseInt(map[0][1]);
+    let h2 = parseInt(map[1][0]);
+
+    let start = new Node([0,1], 1, h1, Dir.E);
     q.queue(start);
-    visited["0,0,E,0"] = 0;
+    visited["0,1,1,1"] = h1;
+
+    start = new Node([1,0], 0, h2, Dir.S);
+    q.queue(start);
+    visited["1,0,2,1"] = h2;
+
 
     while(q.length > 0) {
         console.log(q.length);
@@ -45,7 +54,7 @@ function aStar(map: string[]) {
         const [x, y] = visiting.position;
         const k = x+","+y+","+visiting.curDir+","+visiting.repeatDir;
 
-        if (x == target[0] && y == target[1]) {
+        if (x == target[0] && y == target[1] && visiting.repeatDir >= 4) {
             console.log("FOUND!: ", visiting.heatLoss);
             break;
         }
@@ -71,7 +80,9 @@ function aStar(map: string[]) {
             }
             
             const shouldVisit = inbounds && (!visited[k] || visited[k] > hl);
-            const dirValid = (d[2]+2)%4 != visiting.curDir && ((d[2] != visiting.curDir) || visiting.repeatDir < 3);
+            let dirValid = (d[2]+2)%4 != visiting.curDir && ((d[2] != visiting.curDir) || visiting.repeatDir < 10);
+            //Part Two, move at least 4
+            dirValid = dirValid && (d[2] == visiting.curDir || visiting.repeatDir >= 4);
 
             if (shouldVisit && dirValid) {
                 visited[k] = hl;
@@ -96,6 +107,15 @@ const map = [
 "1224686865563",
 "2546548887735",
 "4322674655533"]
+
+/*
+const map = [
+"111111111111",
+"999999999991",
+"999999999991",
+"999999999991",
+"999999999991",
+]
 */
 
 const map = fs.readFileSync('input_day_17.txt', 'utf-8').split('\n');
