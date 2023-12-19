@@ -55,6 +55,14 @@ class Nodetor {
         this.if_true = if_true;
         this.if_false = if_false;
     }
+
+    is_terminal() : boolean {
+        return this.content === "A" || this.content == "R";
+    }
+
+    is_jump() : boolean {
+        return !this.is_terminal() && !this.if_true && !this.if_false;
+    }
 }
 
 function qualityAssure(pieceSpecs: Spec, wflows: Record<string, Functor>) : boolean {
@@ -140,6 +148,7 @@ function parseLine(line: string) : [string, Functor] {
 let lines: string[];
 let specs: string[];
 
+/*
 lines = [
 "px{a<2006:qkq,m>2090:A,rfg}",
 "pv{a>1716:R,A}",
@@ -152,6 +161,7 @@ lines = [
 "qqz{s>2770:qs,m<1801:hdj,R}",
 "gd{a>3333:R,R}",
 "hdj{m>838:A,pv}"]
+*/
 
 /*
 specs = [
@@ -162,8 +172,6 @@ specs = [
 "{x=2127,m=1623,a=2188,s=1013}",
 ]
 */
-
-/*
 const allLines = fs.readFileSync('input_day_19.txt', 'utf-8').split('\n');
 lines = [];
 while (true) {
@@ -173,6 +181,7 @@ while (true) {
     }
     lines.push(l);
 }
+/*
 allLines.pop();
 specs = allLines;
 
@@ -197,9 +206,80 @@ let rn: Record<string, Nodetor> = {};
 
 lines.forEach(l => {
     let f = parseLineP2(l);
-    console.log(f[0], f[1]);
     rn[f[0]] = f[1];
 });
+
+function traverseTree() {
+    let toVisit: [Link, string[]][] = [[rn['in'], []]]
+    let ranges = [];
+
+    while(toVisit.length > 0) {
+        let cur = toVisit.pop()!;
+        let curN = cur[0]!;
+
+        if (curN.is_terminal()) {
+            if (curN.content == "A") ranges.push(cur[1]);
+        } else if (curN.is_jump()) {
+            toVisit.push([rn[curN.content], [...cur[1]]]);
+        } else {
+            toVisit.push([curN.if_true, [curN.content, ...cur[1]]]);
+
+            //let flipped = curN.content.replace(">", "!").replace("<", "?").replace("?", ">").replace("!", "<") //LOL
+            
+           
+            let flippedContent = curN.content[0]; 
+            let op = curN.content[1];
+            let num = parseInt(curN.content.slice(2));
+            if (curN.content[1] == ">") {
+                flippedContent += "<";
+                flippedContent += (num+1); 
+            } else {
+                flippedContent += ">";
+                flippedContent += (num-1); 
+            }
+         
+        
+            toVisit.push([curN.if_false, [flippedContent, ...cur[1]]]);
+        }
+    }
+    return ranges;
+}
+
+function multThroughRanges(ranges: string[][]) {
+    let tot = 0;
+
+    ranges.forEach(range => {
+        let accepted: Record<string, [number, number]> = {"x": [1, 4000], "m": [1,4000], "a": [1,4000], "s": [1,4000]}
+        range.forEach(r => {
+            let operatingOn = accepted[r[0]];
+            let operator = r[1];
+            let value = parseInt(r.slice(2));
+
+            if (operator == ">") {
+                operatingOn[0] = Math.max(operatingOn[0], (value+1));
+            }
+
+            if (operator == "<") {
+                operatingOn[1] = Math.min(operatingOn[1], (value-1));
+            }
+        })
+
+        let totForR = 1;
+        Object.entries(accepted).forEach(([_, r]) => {
+            totForR *= ((r[1] - r[0]) + 1);
+        })
+
+        tot += totForR;
+    })
+
+    console.log(tot);
+}
+
+
+let acc = traverseTree();
+
+multThroughRanges(acc);
+
 
 
 
