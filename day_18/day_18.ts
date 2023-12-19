@@ -147,7 +147,53 @@ outer_loop:
     return exes;
 }
 
-/*
+function followInstrPartTwo(instructions: [string, number][]) {
+    const currP: [number, number] = [0, 0];
+    let perimiter = 0;
+
+    const pointR : Record<string, [number, number][]> = {};
+    instructions.forEach(([d, steps]) => {
+        perimiter += steps;
+        switch (d) {
+            case "U":
+                currP[0] -= steps;
+                break;
+            case "D":
+                currP[0] += steps;
+                break;
+            case "L":
+                currP[1] -= steps;
+                break;
+            case "R":
+                currP[1] += steps;
+                break;
+        }
+
+        if (!pointR[currP[0]]) {
+            pointR[currP[0]] = [];
+        }
+        pointR[currP[0]].push([...currP]);
+    })
+
+    console.log(perimiter);
+
+    let area = 0;
+
+    const points = Object.entries(pointR).map(([k, list]) => list.sort((a, b) => a[1] - b[1]));
+
+    let curPoints = points.pop()!;
+    while(points.length > 0) {
+        let nxtPoints = points.pop()!;
+
+
+
+    }
+
+
+
+    return pointR;
+}
+
 const instr_s = [
 "R 6 (#70c710)",
 "D 5 (#0dc571)",
@@ -163,10 +209,10 @@ const instr_s = [
 "U 3 (#a77fa3)",
 "L 2 (#015232)",
 "U 2 (#7a21e3)",
-] */
+];
 
-const instr_s = fs.readFileSync('input_day_18.txt', 'utf-8').split('\n');
-instr_s.pop();
+/*const instr_s = fs.readFileSync('input_day_18.txt', 'utf-8').split('\n');
+instr_s.pop();*/
 const instr: [string, number][] = instr_s.map((l) => {
     const std = l.split(' ');
 
@@ -174,6 +220,7 @@ const instr: [string, number][] = instr_s.map((l) => {
 })
 
 //const instr:[string, number][] = [ ["u", 5], ["l", 3], ["d", 3], ["d", 3]];
+// PART ONE:
 const [size, offset] = getSizeAndOffset(instr)
 console.log(offset);
 const map = [];
@@ -192,9 +239,8 @@ for (let i = 0; i < map.length; i++) {
         if (map[i][j] == "#") { exes += 1; }
     }
 }
-console.log(exes);
-map.forEach(l => console.log(l.join('')));
-console.log("\n\n");
 exes += paintBucketAlgorithm(map);
-map.forEach(l => console.log(l.join('')));
-console.log(exes);
+console.log("PART ONE: ", exes);
+// </PART ONE>
+//
+console.log("PART TWO: ", followInstrPartTwo(instr));
