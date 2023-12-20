@@ -1,3 +1,4 @@
+import * as fs from 'fs'
 
 enum PULSE {
     LOW,
@@ -27,9 +28,7 @@ class Module {
         }
 
         if (this.mtype == "%") {
-            if (this.ins > 1) {
-                throw("This should never happen!");
-            }
+            // This is ok I guess?
             return;
         }
         this.receivedPulses[n] = PULSE.LOW;
@@ -50,12 +49,13 @@ class Module {
 
             case "&":
                 this.receivedPulses[comesFrom] = value;
+                let v = PULSE.LOW;
                 Object.entries(this.receivedPulses).forEach(([k, r]) => {
                     if (r == PULSE.LOW) {
-                        return PULSE.HIGH;
+                        v = PULSE.HIGH;
                     }
                 });
-                return PULSE.LOW;
+                return v;
 
             case "%":
                 if (!value) {
@@ -71,23 +71,51 @@ function parseLine(line: string, conx: Record<string, [Module, string[]]>) {
     let [mod_n, into] = line.split('->');
     mod_n = mod_n.trim();
     const mod = new Module(mod_n.slice(1), mod_n[0])
-    const into_ms = into.trim().split(',');
+    let into_ms = into.split(',');
+    into_ms = into_ms.map(s => s.trim());
     conx[mod.name] = [mod, into_ms]
 }
 
-function pulse(conx: Record<string, [Module, string[]]>) {
-    let [curM, toPulse] = conx['roadcaster']; // hehe roadcaster
+function pulse(conx: Record<string, [Module, string[]]>) : [number, number] {
+    let [curMod, conexions] = conx['roadcaster']; // hehe roadcaster
+    let toPulse: [PULSE, string, string[]][] = [[PULSE.LOW, curMod.name, conexions]]
+    let lowPulses = 0, highPulses = 0;
 
+    lowPulses++; // Account for the button being pressed
     while (toPulse.length > 0) {
+        let nextPulses: [PULSE, string, string[]][]  = [];
+        toPulse.forEach(([pulseValue, fromName, toConx]) =>  {
+            toConx.forEach( conexionName => {
+                //console.log(fromName, "-", pulseValue == PULSE.LOW ? "low" : "high", "->", conexionName);
+
+                if (pulseValue == PULSE.LOW) lowPulses++;
+                if (pulseValue == PULSE.HIGH) highPulses++;
+
+                let [cm, toc] = conx[conexionName] ?? [undefined, undefined];
+                if (cm) {
+                    let nv = cm.processPulse(fromName, pulseValue);
+                    if (nv != PULSE.DEAD) nextPulses.push([nv, cm.name, toc]);
+                }
+            })
+        })
+
+        toPulse = nextPulses;
     }
+
+    return [lowPulses, highPulses];
 }
 
+/*
 const lines = [
 "broadcaster -> a",
 "%a -> inv, con",
 "&inv -> b",
 "%b -> con",
 "&con -> output"]
+*/
+
+const lines = fs.readFileSync('input_day_20.txt', 'utf-8').split('\n');
+lines.pop();
 
 const conx: Record<string, [Module, string[]]> = {}; 
 lines.forEach(l => parseLine(l, conx));
@@ -98,6 +126,19 @@ Object.entries(conx).forEach(([k, [_, outs]]) => {
     });
 })
 
+let b = false;
+let i = 1000;
+let lp = 0, hp = 0;
+while (i > 0) {
+    i--;
+    let [l, h] = pulse(conx);
+    lp += l;
+    hp += h;
+
+    b = Object.entries(conx).filter(([_, [mod, __]]) => {
+        return !mod.isBackToInitial();
+    }).length == 0;
+}
 
 
-console.log(conx);
+console.log(lp*hp);
