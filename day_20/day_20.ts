@@ -87,6 +87,9 @@ function pulse(conx: Record<string, [Module, string[]]>) : [number, number] {
         toPulse.forEach(([pulseValue, fromName, toConx]) =>  {
             toConx.forEach( conexionName => {
                 //console.log(fromName, "-", pulseValue == PULSE.LOW ? "low" : "high", "->", conexionName);
+                //
+                // PART TWO... let's be dirty, don't try this at home!
+                if (pulseValue == PULSE.LOW && conexionName == "rx") throw("FOUND IT!");
 
                 if (pulseValue == PULSE.LOW) lowPulses++;
                 if (pulseValue == PULSE.HIGH) highPulses++;
@@ -127,10 +130,11 @@ Object.entries(conx).forEach(([k, [_, outs]]) => {
 })
 
 let b = false;
-let i = 1000;
+let i = 0;
 let lp = 0, hp = 0;
-while (i > 0) {
-    i--;
+while (i < 1000000000) {
+    console.log("Button Press: ", i);
+    i++
     let [l, h] = pulse(conx);
     lp += l;
     hp += h;
